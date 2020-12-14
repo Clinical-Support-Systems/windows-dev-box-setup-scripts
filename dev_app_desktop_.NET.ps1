@@ -24,6 +24,7 @@ function executeScript {
 #--- Setting up Windows ---
 executeScript "SystemConfiguration.ps1";
 executeScript "FileExplorerSettings.ps1";
+Set-WindowsExplorerOptions -DisableShowHiddenFilesFoldersDrives
 executeScript "RemoveDefaultApps.ps1";
 executeScript "CommonDevTools.ps1";
 
