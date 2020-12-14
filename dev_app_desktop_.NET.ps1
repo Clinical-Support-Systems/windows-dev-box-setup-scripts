@@ -28,6 +28,7 @@ executeScript "RemoveDefaultApps.ps1";
 executeScript "CommonDevTools.ps1";
 
 #--- Tools ---
+choco install -y powershell-core
 choco install -y visualstudio2019enterprise
 Update-SessionEnvironment #refreshing env due to Git install
 
@@ -42,6 +43,8 @@ choco install -y visualstudio2019-workload-webbuildtools
 
 choco install -y vscode
 choco install -y git --package-parameters="'/GitAndUnixToolsOnPath /WindowsTerminal'"
+choco install -y nodejs
+choco install -y poshgit
 choco install -y python
 choco install -y 7zip.install
 choco install -y winrar
@@ -52,6 +55,8 @@ choco install -y microsoft-windows-terminal
 choco install -y putty.install
 choco install -y gitkraken
 choco install -y filezilla
+choco install sql-server-management-studio
+RefreshEnv
 choco install -y ssms
 RefreshEnv
 choco install -y sqlsearch
@@ -63,12 +68,16 @@ choco install -y azure-data-studio
 choco install hackfont firacode inconsolata dejavufonts robotofonts droidfonts -y
 Enable-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V-All -Online -NoRestart
 Enable-WindowsOptionalFeature -FeatureName Containers -Online -NoRestart
-Enable-WindowsOptionalFeature -FeatureName Microsoft-Windows-Subsystem-Linux -Online -NoRestart
+choco install wsl2
+RefreshEnv
 
 #--- Ubuntu ---
 choco install wsl-ubuntu-2004 --params "/InstallRoot:true"
-
 RefreshEnv
+
+winget install --name PowerShell --exact
+RefreshEnv
+
 choco install -y googlechrome
 choco install -y firefox
 choco install -y microsoft-edge-insider
@@ -112,6 +121,24 @@ Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search
 # Hide Task View button
 Write-Host "Hiding Task View button..."
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton" -Type DWord -Value 0
+
+# Turn off search box in Taskbar
+If (-Not (Test-Path "HKCU:SOFTWARE\Microsoft\Windows\CurrentVersion\Search")) {
+    New-Item -Path HKCU:SOFTWARE\Microsoft\Windows\CurrentVersion\Search | Out-Null
+}
+Set-ItemProperty -Path "HKCU:SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name SearchboxTaskbarMode -Type DWord -Value 0
+
+# Turn off cortana in Taskbar
+If (-Not (Test-Path "HKCU:SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced")) {
+    New-Item -Path HKCU:SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced | Out-Null
+}
+Set-ItemProperty -Path "HKCU:SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name ShowCortanaButton -Type DWord -Value 0
+
+# Turn off task view button in Taskbar
+If (-Not (Test-Path "HKCU:SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced")) {
+    New-Item -Path HKCU:SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced | Out-Null
+}
+Set-ItemProperty -Path "HKCU:SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name ShowTaskViewButton -Type DWord -Value 0
 
 # Disable one-drive
 Write-Host "Disabling OneDrive..."
