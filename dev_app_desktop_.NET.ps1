@@ -72,13 +72,6 @@ Enable-WindowsOptionalFeature -FeatureName Containers -Online -NoRestart
 choco install wsl2
 RefreshEnv
 
-#--- Ubuntu ---
-choco install wsl-ubuntu-2004 --params "/InstallRoot:true"
-RefreshEnv
-
-winget install --name PowerShell --exact
-RefreshEnv
-
 choco install -y googlechrome
 choco install -y firefox
 choco install -y microsoft-edge-insider
